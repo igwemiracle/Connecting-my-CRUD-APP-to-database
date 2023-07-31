@@ -63,53 +63,16 @@ async def UpdateTodoItem(employee_data: Employee, employee_id: int, db: Session 
     db.commit()
     return employee_data
 
-# @todo_router.delete("/delete/{todo_id}")
-# async def DeleteSingleTodo(todo_id: int) -> dict:
-#     for index in range(len(todo_list)):
-#         todo = todo_list[index]
-#         if todo.id == todo_id:
-#             todo_list.pop(index)
-#             return {
-#                 "Message": "Todo deleted successfully"
-#             }
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Todo with supplied ID doesn't exist."
-#         )
 
-
-# @todo_router.get("/todo/{todo_id}")
-# async def GetSingleID(todo_id: int = Path(..., title="The id of the todo to retrieve")) -> dict:
-#     for todo in todo_list:
-#         if todo.id == todo_id:
-#             return {
-#                 "todo": todo
-#             }
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Todo with supplied ID doesn't exist."
-#         )
-
-
-# @ todo_router.post("/employee")
-# async def AddEmployee(employee: Employee):
-#     if (employee.Age > 18):
-#         new_emp = Employee(EmpId=employee.EmpId,
-#                            Name=employee.Name,
-#                            Age=employee.Age,
-#                            JobExperience=employee.JobExperience,
-#                            Nationality=employee.Nationality,
-#                            Color=employee.Color)
-#         return new_emp
-#     return {"Message": "Employee not up to age!"}
-
-
-# @ todo_router.post("/items/")
-# async def MyItems(item_id: int, items: Item, QueryString: Optional[str] = None):
-#     result = {"ItemID": item_id, **items.dict()}
-#     if items.Price:
-#         ans = "$"
-#         result["Price"] = ans+items.Price
-#     if QueryString:
-#         result.update({"QueryString": QueryString})
-#     return result
+@app.delete("/delete/{employee_id}")
+async def DeleteSingleTodo(employee_id: int, db: Session = Depends(get_db)):
+    employee_model = db.query(model.Employee).filter(
+        model.Employee.id == employee_id).first()
+    if employee_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Todo with supplied ID doesn't exist."
+        )
+    db.query(model.Employee).filter(model.Employee.id == employee_id).delete()
+    db.commit()
+    return {"Message": f"ID {employee_id} deleted successfully"}
