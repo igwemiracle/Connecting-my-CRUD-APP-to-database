@@ -1,10 +1,14 @@
-from fastapi import FastAPI, APIRouter, Path, HTTPException, status, Request, Depends
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, status, Request, Depends, Form
 import model
 from database import engine, sessionLocal
 from sqlalchemy.orm import Session
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
+templates = Jinja2Templates(directory="templates")
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 model.Base.metadata.create_all(bind=engine)
 
 
@@ -16,63 +20,54 @@ def get_db():
         db.close()
 
 
-class Employee(BaseModel):
-    Name: str = Field(min_length=1)
-    Age: int = Field(gt=10)
-    JobExperience: int = Field(gt=3, lt=10)
-    Nationality: str
-
-
-todo_list = []
-
-
 @app.get("/")
-async def RetrieveTodos(db: Session = Depends(get_db)):
-    return db.query(model.Employee).all()
+async def home(request: Request, db: Session = Depends(get_db)):
+    users = db.query(model.EmployeeData).order_by(model.EmployeeData.id.desc())
+    return templates.TemplateResponse("todo.html", {"request": request, "users": users})
 
 
-@app.post("/todo")
-async def AddTodo(employee: Employee, db: Session = Depends(get_db)):
-    employee_model = model.Employee()
-    employee_model.name = employee.Name
-    employee_model.age = employee.Age
-    employee_model.job_experience = employee.JobExperience
-    employee_model.nationality = employee.Nationality
-
-    db.add(employee_model)
+@app.post("/add")
+async def add(request: Request, name: str = Form(...), position: str = Form(...), job_experience: int = Form(...), nationality: str = Form(...), db: Session = Depends(get_db)):
+    users = model.EmployeeData(name=name, position=position,
+                               job_experience=job_experience, nationality=nationality)
+    db.add(users)
     db.commit()
-    return employee
+    return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.put("/todo/{employee_id}")
-async def UpdateTodoItem(employee_data: Employee, employee_id: int, db: Session = Depends(get_db)):
-    employee_model = db.query(model.Employee).filter(
-        model.Employee.id == employee_id).first()
-    if employee_model is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"ID {employee_id}: Does not exist"
-        )
+@app.get("/addnew")
+async def addnew(request: Request):
+    return templates.TemplateResponse("addnew.html", {"request": request})
 
-    employee_model.name = employee_data.Name
-    employee_model.age = employee_data.Age
-    employee_model.job_experience = employee_data.JobExperience
-    employee_model.nationality = employee_data.Nationality
 
-    db.add(employee_model)
+@app.get("/edit/{employee_id}")
+async def edit(request: Request, employee_id: int, db: Session = Depends(get_db)):
+    user = db.query(model.EmployeeData).filter(
+        model.EmployeeData.id == employee_id).first()
+
+    return templates.TemplateResponse("edit.html", {"request": request, "user": user})
+
+
+@app.post("/update/{employee_id}")
+async def update(request: Request, employee_id: int, name: str = Form(...), position: str = Form(...), job_experience: int = Form(...), nationality: str = Form(...), db: Session = Depends(get_db)):
+
+    users = db.query(model.EmployeeData).filter(
+        model.EmployeeData.id == employee_id).first()
+
+    users.name = name
+    users.position = position
+    users.job_experience = job_experience
+    users.nationality = nationality
+
     db.commit()
-    return employee_data
+    return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.delete("/delete/{employee_id}")
-async def DeleteSingleTodo(employee_id: int, db: Session = Depends(get_db)):
-    employee_model = db.query(model.Employee).filter(
-        model.Employee.id == employee_id).first()
-    if employee_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Todo with supplied ID doesn't exist."
-        )
-    db.query(model.Employee).filter(model.Employee.id == employee_id).delete()
+@app.get("/delete/{employee_id}")
+async def delete(request: Request, employee_id: int, db: Session = Depends(get_db)):
+    users = db.query(model.EmployeeData).filter(
+        model.EmployeeData.id == employee_id).first()
+
+    db.delete(users)
     db.commit()
-    return {"Message": f"ID {employee_id} deleted successfully"}
+    return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)

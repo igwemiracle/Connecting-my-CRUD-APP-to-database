@@ -1,3 +1,2 @@
-test.http
-env/
+venv/
 __pycache__/

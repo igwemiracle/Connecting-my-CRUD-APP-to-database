@@ -1,0 +1,27 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<form action="/update/{{user.id}}" method="post">
+    <input type="hidden" name="_method" value="put">
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" placeholder="Name" class="form-control" value="{{user.name}}" />
+    </div>
+    <div class="mb-3">
+        <label>Position</label>
+        <input type="text" name="position" placeholder="position" class="form-control" value="{{user.position}}" />
+    </div>
+    <div class="mb-3">
+        <label>Job Experience</label>
+        <input type="text" name="job_experience" placeholder="job_experience" class="form-control"
+            value="{{user.job_experience}}" />
+    </div>
+    <div class="mb-3">
+        <label>Nationality</label>
+        <input type="text" name="nationality" placeholder="nationality" class="form-control"
+            value="{{user.nationality}}" />
+    </div>
+
+    <input type="submit" value="Update" class="btn btn-primary mb-3" />
+</form>
+{% endblock content %}

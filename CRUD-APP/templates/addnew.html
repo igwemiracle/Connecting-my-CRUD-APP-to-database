@@ -1,0 +1,25 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<form action="/add" method="post">
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" placeholder="Name" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Position</label>
+        <input type="text" name="position" placeholder="position" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Job Experience</label>
+        <input type="text" name="job_experience" placeholder="job_experience" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Nationality</label>
+        <input type="text" name="nationality" placeholder="nationality" class="form-control" />
+    </div>
+
+    <input type="submit" value="Submit" class="btn btn-primary mb-3" />
+</form>
+
+{% endblock content %}
