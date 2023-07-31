@@ -1,6 +1,3 @@
-from pydantic import BaseModel
-from fastapi import Body
-from typing import Optional
 from sqlalchemy import Column, Integer, String
 from database import Base
 
