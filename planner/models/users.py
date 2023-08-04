@@ -7,10 +7,9 @@ from beanie import PydanticObjectId
 
 
 class User(Document):
-    id: PydanticObjectId = ObjectId
+    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
     email: EmailStr
     password: str
-    events: Optional[List[Link[Event]]]
 
     class Settings:
         name = "users"
@@ -18,12 +17,21 @@ class User(Document):
     class Config:
         schema_extra = {
             "example": {
+                "id": "64cb9225445c574effe9eb1f",
                 "email": "fastapi@packt.com",
                 "password": "strong!!!",
-                "events": [],
             }}
 
 
 class UserSignIn(BaseModel):
+    id: Optional[PydanticObjectId]
     email: EmailStr
     password: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "64cb9225445c574effe9eb1f",
+                "email": "fastapi@packt.com",
+                "password": "strong!!!",
+            }}
