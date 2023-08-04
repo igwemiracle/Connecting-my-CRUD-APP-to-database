@@ -1,7 +1,7 @@
 # Building a simple FastAPI application
 
-## Connecting My CRUD-APP to database: SQLModel
+    Connecting My CRUD-APP to database: SQLModel
 
-### planner folder: Structuring FASTAPI application
+## Structuring FASTAPI application
 
-#### Connecting it to Database: NoSQL, MongoDB
+    Connecting it to Database: NoSQL, MongoDB
