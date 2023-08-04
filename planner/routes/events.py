@@ -1,48 +1,56 @@
-from fastapi import APIRouter, HTTPException, Body, status
-from models.events import Event
+from beanie import PydanticObjectId
+from fastapi import APIRouter, HTTPException, status
+from models.events import Event, EventUpdate
 from typing import List
 
+
 event_router = APIRouter(tags=["Events"])
-events = []
 
 
-@event_router.get("/", response_model=List[Event])
+@event_router.get("/", status_code=200)
 async def retrieve_all_events() -> List[Event]:
+    events = await Event.find_all().to_list()
     return events
 
 
-@event_router.get("/{id}", response_model=Event)
-async def retrieve_event(id: int) -> Event:
-    for event in events:
-        if event.id == id:
-            return event
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                        detail="Event with supplied ID does not exist")
+@event_router.get("/{even_id}", response_model=Event)
+async def retrieve_event(even_id: PydanticObjectId) -> Event:
+    print(even_id)
+    event_to_get = await Event.get(even_id)
+    print(event_to_get)
+    return event_to_get
 
 
-@event_router.post("/new")
-async def create_event(body: Event = Body(...)) -> dict:
-    events.append(body)
+@event_router.post("/new", status_code=201)
+async def create_event(body: Event) -> dict:
+    await body.create()
     return {
         "Message": "Event created successfully"
     }
 
 
-@event_router.delete("/{id}")
-async def delete_event(id: int) -> dict:
-    for event in events:
-        if event.id == id:
-            events.remove(event)
-            return {
-                "Message": "Event deleted successfully"
-            }
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                        detail="Event with supplied ID does not exist")
+@event_router.put("/{event_id}", response_model=Event)
+async def update_event(event: Event, event_id: PydanticObjectId, body: EventUpdate) -> Event:
+    event_to_update = await Event.get(event_id)
+    if not event_to_update:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event with supplied ID does not exist"
+        )
+    event_to_update.id = event.id
+    event_to_update.title = event.title
+    event_to_update.image = event.image
+    event_to_update.description = event.description
+    event_to_update.tags = event.tags
+    event_to_update.location = event.location
+    await event_to_update.save()
+    return event_to_update
 
 
-@event_router.delete("/")
-async def delete_all_events() -> dict:
-    events.clear()
+@event_router.delete("/{event_id}", status_code=204)
+async def delete_event(event_id: PydanticObjectId):
+    event_to_delete = await Event.get(event_id)
+    await event_to_delete.delete()
     return {
-        "Message": "Events deleted successfully"
+        "Message": "Event deleted successfully."
     }
