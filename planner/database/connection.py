@@ -4,6 +4,8 @@ import motor
 import motor.motor_asyncio
 import beanie
 
+# Initializes my database
+
 
 async def initialize():
     client = motor.motor_asyncio.AsyncIOMotorClient(
