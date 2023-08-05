@@ -1,6 +1,6 @@
 from beanie import PydanticObjectId
 from fastapi import APIRouter, HTTPException, status
-from models.events import Event, EventUpdate
+from models.events import Event
 from typing import List
 
 
@@ -29,15 +29,14 @@ async def create_event(body: Event) -> dict:
     }
 
 
-@event_router.put("/{event_id}", response_model=Event)
-async def update_event(event: Event, event_id: PydanticObjectId, body: EventUpdate) -> Event:
+@event_router.put("/{event_id}", status_code=200)
+async def update_event(event: Event, event_id: PydanticObjectId) -> Event:
     event_to_update = await Event.get(event_id)
     if not event_to_update:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Event with supplied ID does not exist"
         )
-    event_to_update.id = event.id
     event_to_update.title = event.title
     event_to_update.image = event.image
     event_to_update.description = event.description
