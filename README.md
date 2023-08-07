@@ -4,4 +4,6 @@
 
 ## Structuring FASTAPI application
 
-    Connecting it to Database: NoSQL, MongoDB
+    Connecting My CRUD-APP to Database: NoSQL, MongoDB
+    Securing FastAPI application Using bearer token authentication.
+    Securing the application with OAuth2 and JWT(JSON Web Token)
