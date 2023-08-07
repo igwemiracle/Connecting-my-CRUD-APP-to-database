@@ -1,14 +1,9 @@
-from typing import Optional, List
-from beanie import Document, Link
-from pydantic import BaseModel, EmailStr, Field
-from models.events import Event
-from bson import ObjectId
-from beanie import PydanticObjectId
+from beanie import Document
+from pydantic import BaseModel
 
 
 class User(Document):
-    id: PydanticObjectId = Field(default_factory=PydanticObjectId, alias="_id")
-    email: EmailStr
+    username: str
     password: str
 
     class Settings:
@@ -17,21 +12,23 @@ class User(Document):
     class Config:
         schema_extra = {
             "example": {
-                "id": "64cb9225445c574effe9eb1f",
-                "email": "fastapi@packt.com",
-                "password": "strong!!!",
-            }}
+                "username": "igwemiracle",
+                "password": "miracle123",
+            }
+        }
 
+
+# class TokenResponse(BaseModel):
+#     access_token: str
+#     token_type: str
 
 class UserSignIn(BaseModel):
-    id: Optional[PydanticObjectId]
-    email: EmailStr
+    username: str
     password: str
 
     class Config:
         schema_extra = {
             "example": {
-                "id": "64cb9225445c574effe9eb1f",
-                "email": "fastapi@packt.com",
-                "password": "strong!!!",
+                "username": "fastapipacktcom",
+                "password": "!strong123!",
             }}
