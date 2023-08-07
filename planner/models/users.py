@@ -13,22 +13,13 @@ class User(Document):
         schema_extra = {
             "example": {
                 "username": "igwemiracle",
-                "password": "miracle123",
+                "password": "miracle123"
             }
         }
 
 
-# class TokenResponse(BaseModel):
-#     access_token: str
-#     token_type: str
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
 
-class UserSignIn(BaseModel):
-    username: str
-    password: str
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "username": "fastapipacktcom",
-                "password": "!strong123!",
-            }}
