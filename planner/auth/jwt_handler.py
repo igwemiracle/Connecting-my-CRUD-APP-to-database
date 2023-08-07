@@ -11,13 +11,13 @@ def create_access_token(user: str) -> str:
         "user": user,
         "expires": time.time() + 3600
     }
-    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    token = jwt.encode(payload, secret_key(), algorithm="HS256")
     return token
 
 
 def verify_access_token(token: str) -> dict:
     try:
-        data = jwt.decode(token, secret_key, algorithms=["HS256"])
+        data = jwt.decode(token, secret_key(), algorithms=["HS256"])
         expire = data.get("expires")
 
         if expire is None:
@@ -28,6 +28,6 @@ def verify_access_token(token: str) -> dict:
                                 detail="Token expired!")
         return data
 
-    except JWTError:
+    except JWTError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Invalid token")
+                            detail="Invalid token") from e
