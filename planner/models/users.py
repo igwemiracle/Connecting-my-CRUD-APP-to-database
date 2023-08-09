@@ -1,7 +1,6 @@
 from beanie import Document
 from pydantic import BaseModel
 
-
 class User(Document):
     username: str
     password: str
@@ -16,7 +15,6 @@ class User(Document):
                 "password": "miracle123"
             }
         }
-
 
 class TokenResponse(BaseModel):
     access_token: str
