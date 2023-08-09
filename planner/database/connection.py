@@ -19,3 +19,7 @@ async def initialize():
     db_name = "user"
     await beanie.init_beanie(database=client[db_name], document_models=[Event, User])
     logging.info(f"Connected to database: {db_name}")
+
+
+
+
