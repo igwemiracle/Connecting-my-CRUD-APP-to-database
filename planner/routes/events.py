@@ -8,23 +8,22 @@ event_router = APIRouter(tags=["Events"])
 
 
 @event_router.get("/", status_code=200)
-async def retrieve_all_events() -> List[Event]:
-    events = await Event.find_all().to_list()
+async def retrieve_all_events(user: str = Depends(authenticate)) -> List[Event]:
+    events = await Event.find({"creator": user}).to_list()
     return events
 
 
 @event_router.get("/{even_id}", response_model=Event)
-async def retrieve_event(even_id: PydanticObjectId) -> Event:
-    print(even_id)
+async def retrieve_event(even_id: PydanticObjectId, user: str = Depends(authenticate)) -> Event:
     event_to_get = await Event.get(even_id)
-    print(event_to_get)
     return event_to_get
 
 @event_router.post("/new", status_code=201)
 async def create_event(body: Event, user: str = Depends(authenticate)) -> dict:
+    body.creator = user
     await body.create()
     return {
-        "Message": "Event created successfully"
+        "Message": f"{body.creator}'s Event created successfully."
     }
 
 
