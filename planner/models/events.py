@@ -1,5 +1,5 @@
 from beanie import Document
-from typing import  List, Optional
+from typing import  List
 from pydantic import  Field
 from bson import ObjectId
 from beanie import PydanticObjectId

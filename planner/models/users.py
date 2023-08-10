@@ -11,8 +11,8 @@ class User(Document):
     class Config:
         schema_extra = {
             "example": {
-                "username": "igwemiracle",
-                "password": "miracle123"
+                "username": "UserName",
+                "password": "PassWord"
             }
         }
 
