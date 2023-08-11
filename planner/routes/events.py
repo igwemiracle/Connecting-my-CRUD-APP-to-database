@@ -18,7 +18,7 @@ async def retrieve_event(even_id: PydanticObjectId, user: str = Depends(authenti
     event_to_get = await Event.get(even_id)
     return event_to_get
 
-@event_router.post("/new", status_code=201)
+@event_router.post("/new", status_code=200)
 async def create_event(body: Event, user: str = Depends(authenticate)) -> dict:
     body.creator = user
     await body.create()
@@ -45,9 +45,14 @@ async def update_event(event: Event, event_id: PydanticObjectId,
     return event_to_update
 
 
-@event_router.delete("/{event_id}", status_code=204)
+@event_router.delete("/{event_id}", status_code=200)
 async def delete_event(event_id: PydanticObjectId, user:str = Depends(authenticate)):
     event_to_delete = await Event.get(event_id)
+    if not event_to_delete:
+            raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
     await event_to_delete.delete()
     return {
         "Message": "Event deleted successfully."
