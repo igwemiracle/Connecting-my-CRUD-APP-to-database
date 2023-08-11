@@ -1,5 +1,5 @@
 from beanie import Document
-from typing import  List
+from typing import  List, Optional
 from pydantic import  Field
 from bson import ObjectId
 from beanie import PydanticObjectId
@@ -7,7 +7,7 @@ from beanie import PydanticObjectId
 
 class Event(Document):
     id: PydanticObjectId = ObjectId
-    creator:str
+    creator:Optional[str] = None
     title: str = Field(max_length=100)
     image: str
     description: str = Field(max_length=100)
@@ -21,9 +21,10 @@ class Event(Document):
     class Config:
         schema_extra = {
             "example": {
+                "creator" : "TestUsername",
                 "title": "FastAPI Book Launch",
                 "image": "https:// linktomyimage.com/image.png",
-                "description": "We will be discussing the contents of the FastAPI book in",
+                "description": "We will be discussing the contents of the FastAPI book",
                 "tags": ["python", "fastapi", "book", "launch"],
                 "location": "Google Meet"
             }}
