@@ -1,8 +1,12 @@
 # Building a simple FastAPI application
 
-    Connecting My CRUD-APP to database: SQL
+## CRUD-APP Folder
 
-## Structuring FASTAPI application
+    Connecting My CRUD-Todo-APP to database: SQL
+
+# Structuring FASTAPI application
+
+## Planner Folder
 
 - Connecting My CRUD-APP to Database: NoSQL, MongoDB
 - Securing FastAPI application Using bearer token authentication.
