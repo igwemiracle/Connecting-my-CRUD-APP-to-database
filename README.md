@@ -9,3 +9,4 @@
 - Securing the application with OAuth2 and JWT(JSON Web Token)
 - Unit testting using `pytest`, `httpx` and `pytest- asyncio`library
   to test our Asynchronous API.
+- Deploying my FastAPI application locally using Docker
